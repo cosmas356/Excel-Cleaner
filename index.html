@@ -1,214 +1,283 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
-<title>Excel Data Cleaner</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Cleaner Pro - 黑框硬朗版</title>
+    <style>
+        :root {
+            --primary: #000000; /* 改为纯黑主题 */
+            --success: #22c55e;
+            --danger: #ef4444;
+            --glass-bg: #ffffff;
+            --text-dark: #000000;
+        }
 
-<style>
-    body {
-        font-family: "Segoe UI", Arial, sans-serif;
-        background: #eef1f5;
-        padding: 40px;
-    }
+        body {
+            /* 保持绚丽背景，衬托中间的白底黑框 */
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            background-attachment: fixed;
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-    .container {
-        max-width: 900px;
-        margin: auto;
-        background: #ffffff;
-        padding: 30px 40px;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    }
+        /* 玻璃拟态容器 + 黑色边框 */
+        .glass-container {
+            width: 95%;
+            max-width: 1100px;
+            background: var(--glass-bg);
+            border-radius: 24px;
+            border: 2px solid #000000; /* 容器黑色边框 */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative;
+        }
 
-    h1 {
-        margin-top: 0;
-        color: #2c3e50;
-        font-size: 28px;
-    }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    p {
-        color: #555;
-        margin-bottom: 15px;
-    }
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: #000;
+            font-weight: 800;
+        }
 
-    textarea {
-        width: 100%;
-        height: 200px;
-        margin-top: 8px;
-        font-size: 14px;
-        padding: 12px;
-        box-sizing: border-box;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        resize: vertical;
-    }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
 
-    textarea:focus {
-        outline: none;
-        border-color: #4a90e2;
-        box-shadow: 0 0 0 2px rgba(74,144,226,0.2);
-    }
+        @media (max-width: 850px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
 
-    .btn {
-        margin-top: 14px;
-        margin-right: 10px;
-        padding: 10px 22px;
-        font-size: 15px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
+        .panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-    .btn-primary {
-        background: #4a90e2;
-        color: #fff;
-    }
+        .panel label {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .btn-primary:hover {
-        background: #357abd;
-    }
+        /* 重点：输入输出框的黑色粗边框 */
+        textarea {
+            width: 100%;
+            height: 400px;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid #000000; /* 黑色实心边框 */
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            transition: all 0.2s;
+            resize: none;
+            box-sizing: border-box;
+            background: #fff;
+            color: #000;
+        }
 
-    .btn-secondary {
-        background: #f1f3f6;
-        color: #333;
-    }
+        textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1); /* 聚焦时淡淡的黑色阴影 */
+        }
 
-    .btn-secondary:hover {
-        background: #e0e3e8;
-    }
+        /* 按钮设计 */
+        .controls {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 15px;
+        }
 
-    .info {
-        margin-top: 12px;
-        color: #27ae60;
-        font-weight: 500;
-    }
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid #000;
+            font-size: 15px;
+        }
 
-    .page {
-        display: none;
-    }
+        .btn-run {
+            background: #000;
+            color: white;
+        }
 
-    .page.active {
-        display: block;
-    }
+        .btn-run:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
 
-    .section {
-        margin-top: 25px;
-    }
+        .btn-clear {
+            background: white;
+            color: #000;
+        }
 
-    .actions {
-        margin-top: 15px;
-    }
-</style>
+        .btn-clear:hover {
+            background: #f0f0f0;
+        }
+
+        /* 底部操作 */
+        .footer-actions {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-copy {
+            background: var(--success);
+            color: white;
+            border: 2px solid #000;
+            width: 100%;
+            max-width: 400px;
+            justify-content: center;
+        }
+
+        .btn-switch {
+            background: #e2e8f0;
+            color: #000;
+            border: 2px solid #000;
+        }
+
+        .status-msg {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            display: none;
+            border: 2px solid #000;
+            background: #dcfce7; /* 成功提示保持一点浅绿 */
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="glass-container">
+    <header>
+        <h1 id="title-text">Excel Cleaner 4D</h1>
+    </header>
 
-<!-- ================= 4D PAGE ================= -->
-<div id="page4d" class="page active">
-    <h1>🧹 Excel Data Cleaner – 4D</h1>
-    <p>自动删除 <b>4 个数字 + ##</b>（例如：1234##）</p>
-
-    <div class="section">
-        <textarea id="input4d" placeholder="Paste Excel data here..."></textarea>
+    <div id="page4d" class="page active">
+        <div class="main-grid">
+            <div class="panel">
+                <label>📥 原始数据</label>
+                <textarea id="input4d"></textarea>
+            </div>
+            <div class="panel">
+                <label>✅ 清理结果</label>
+                <textarea id="output4d" readonly></textarea>
+            </div>
+            <div class="controls">
+                <button class="btn btn-run" onclick="runClean4D()">🚀 开始清理 (4D)</button>
+                <button class="btn btn-clear" onclick="clearAll('input4d', 'output4d', 'info4d')">🗑️ 全部清空</button>
+            </div>
+        </div>
+        <div class="footer-actions">
+            <div id="info4d" class="status-msg"></div>
+            <button class="btn btn-copy" onclick="doCopy('output4d')">📋 复制清理结果</button>
+            <button class="btn btn-switch" onclick="toPage('page3d', '3D')">🔄 切换至 3D 模式</button>
+        </div>
     </div>
 
-    <div class="actions">
-        <button class="btn btn-primary" onclick="clean4D()">✨ 开始清理 (4D)</button>
+    <div id="page3d" class="page">
+        <div class="main-grid">
+            <div class="panel">
+                <label>📥 原始数据</label>
+                <textarea id="input3d"></textarea>
+            </div>
+            <div class="panel">
+                <label>✅ 清理结果</label>
+                <textarea id="output3d" readonly></textarea>
+            </div>
+            <div class="controls">
+                <button class="btn btn-run" onclick="runClean3D()">🚀 开始清理 (3D)</button>
+                <button class="btn btn-clear" onclick="clearAll('input3d', 'output3d', 'info3d')">🗑️ 全部清空</button>
+            </div>
+        </div>
+        <div class="footer-actions">
+            <div id="info3d" class="status-msg"></div>
+            <button class="btn btn-copy" onclick="doCopy('output3d')">📋 复制清理结果</button>
+            <button class="btn btn-switch" onclick="toPage('page4d', '4D')">🔄 切换至 4D 模式</button>
+        </div>
     </div>
-
-    <div class="info" id="info4d"></div>
-
-    <div class="section">
-        <textarea id="output4d" placeholder="清理后的结果"></textarea>
-    </div>
-
-    <div class="actions">
-        <button class="btn btn-secondary" onclick="copyData('output4d')">📋 Copy</button>
-        <button class="btn btn-secondary" onclick="go3D()">➡️ 切换到 3D</button>
-    </div>
-</div>
-
-<!-- ================= 3D PAGE ================= -->
-<div id="page3d" class="page">
-    <h1>🧹 Excel Data Cleaner – 3D</h1>
-    <p>自动删除 <b>3 个数字 + ##</b>（例如：123##）</p>
-
-    <div class="section">
-        <textarea id="input3d" placeholder="Paste Excel data here..."></textarea>
-    </div>
-
-    <div class="actions">
-        <button class="btn btn-primary" onclick="clean3D()">✨ 开始清理 (3D)</button>
-    </div>
-
-    <div class="info" id="info3d"></div>
-
-    <div class="section">
-        <textarea id="output3d" placeholder="清理后的结果"></textarea>
-    </div>
-
-    <div class="actions">
-        <button class="btn btn-secondary" onclick="copyData('output3d')">📋 Copy</button>
-        <button class="btn btn-secondary" onclick="go4D()">⬅️ 切换到 4D</button>
-    </div>
-</div>
-
 </div>
 
 <script>
-function go3D() {
-    document.getElementById("page4d").classList.remove("active");
-    document.getElementById("page3d").classList.add("active");
-}
-
-function go4D() {
-    document.getElementById("page3d").classList.remove("active");
-    document.getElementById("page4d").classList.add("active");
-}
-
-function clean4D() {
-    processClean("input4d", "output4d", "info4d", /^\d{4}##/, "4D");
-}
-
-function clean3D() {
-    processClean("input3d", "output3d", "info3d", /^\d{3}##/, "3D");
-}
-
-function processClean(inputId, outputId, infoId, regex, label) {
-    const input = document.getElementById(inputId).value;
-    const lines = input.split(/\r?\n/);
-    let removed = 0;
-
-    const cleaned = lines.filter(line => {
-        if (regex.test(line.trim())) {
-            removed++;
-            return false;
-        }
-        return true;
-    });
-
-    document.getElementById(outputId).value = cleaned.join("\n");
-    document.getElementById(infoId).innerText =
-        `完成！已删除 ${removed} 行 (${label})`;
-}
-
-function copyData(outputId) {
-    const textarea = document.getElementById(outputId);
-
-    if (!textarea.value.trim()) {
-        alert("没有可以复制的数据");
-        return;
+    function toPage(pageId, mode) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.getElementById('title-text').innerText = `Excel Cleaner ${mode}`;
     }
 
-    textarea.select();
-    textarea.setSelectionRange(0, 99999);
-    document.execCommand("copy");
+    function runClean4D() { executeProcess("input4d", "output4d", "info4d", /^\d{4}##$/); }
+    function runClean3D() { executeProcess("input3d", "output3d", "info3d", /^\d{3}##$/); }
 
-    alert("✅ 已复制到剪贴板！");
-}
+    function executeProcess(inId, outId, infoId, rx) {
+        const raw = document.getElementById(inId).value;
+        if (!raw.trim()) return;
+
+        const lines = raw.split(/\r?\n/);
+        let removed = 0;
+        const result = lines.filter(l => {
+            if (rx.test(l.trim())) {
+                removed++;
+                return false;
+            }
+            return true;
+        });
+
+        document.getElementById(outId).value = result.join("\n");
+        const info = document.getElementById(infoId);
+        info.innerHTML = `🌟 处理完成！已移除 <b>${removed}</b> 行。`;
+        info.style.display = "block";
+    }
+
+    async function doCopy(id) {
+        const content = document.getElementById(id).value;
+        if (!content) return;
+        try {
+            await navigator.clipboard.writeText(content);
+            alert("✅ 结果已复制！");
+        } catch (e) {
+            document.getElementById(id).select();
+            document.execCommand('copy');
+            alert("✅ 结果已复制！");
+        }
+    }
+
+    function clearAll(i, o, inf) {
+        document.getElementById(i).value = "";
+        document.getElementById(o).value = "";
+        document.getElementById(inf).style.display = "none";
+    }
 </script>
 
 </body>
